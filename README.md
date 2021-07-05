@@ -1,5 +1,6 @@
-# Ti.OSM - Titanium Android module for OpenstreetMap
+# Ti.OSM - OpenstreetMap module for Appcelerato Titanium (Android)
 
+<img src="screenshot.jpg"/><br/>
 Using OpenstreetMap as a map view in Titanium.
 
 ## Setup
