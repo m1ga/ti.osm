@@ -77,13 +77,27 @@ mapView.mapType = OSM.PUBLIC_TRANSPORT;
 
 * add a marker
 ```javascript
-addMarker({
+osmView.addMarker({
     longitude: 0.00,
     latitude: 0.00,
     title: "title",
     icon: "/path/to/image.png",  // marker icon
     image: "/path/to/image.png"  // image inside the infobox
 });
+```
+
+* add multiple markers: if you want to add many markers you can use this syntax to increase performance:
+```javascript
+var markerList = []
+for (var i = 0; i < 100; ++i) {
+	markerList.push({
+		longitude: 11.581981 + Math.random(),
+		latitude: 48.135124 + Math.random(),
+		icon: "/marker_default.png",
+		title: "this is a longer text",
+	});
+}
+osmView.addMarkers(markerList);
 ```
 
 ## Events

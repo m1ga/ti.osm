@@ -1,5 +1,6 @@
 package ti.osm;
 
+import android.app.Activity;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
@@ -51,7 +52,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 	private TiViewProxy proxy;
 	private IMapController mapController;
 	private HashMap<String, Object> startLocation;
-	private ArrayList<Object> markerList = new ArrayList<Object>();
+	private ArrayList<HashMap> markerList = new ArrayList<HashMap>();
 	MyLocationNewOverlay locationOverlay;
 
 	public OSMView(TiViewProxy proxy)
@@ -142,8 +143,10 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 	public void setLocation(HashMap<String, Object> location)
 	{
-		startLocation = location;
-		updateLocation(location);
+		if (location != null) {
+			startLocation = location;
+			updateLocation(location);
+		}
 	}
 
 	private OnlineTileSourceBase getMapType(int paramType)
@@ -196,15 +199,32 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 	private void updateLocation(HashMap<String, Object> location)
 	{
+		if (location == null) {
+			return;
+		}
+
 		mapController.setZoom(TiConvert.toFloat(location.get(TiC.PROPERTY_ZOOM_LEVEL), 5.0f));
 		GeoPoint startPoint = new GeoPoint(TiConvert.toFloat(location.get(TiC.PROPERTY_LATITUDE)),
 										   TiConvert.toFloat(location.get(TiC.PROPERTY_LONGITUDE)));
 		mapController.setCenter(startPoint);
 	}
 
-	public void addMarker(Object m)
+	public void addMarker(HashMap m)
 	{
 		markerList.add(m);
+		updateMarker();
+	}
+
+	public void addMarkers(Object markers)
+	{
+		if (markers instanceof Object[]) {
+			Object[] markersArray = (Object[]) markers;
+			for (int i = 0; i < markersArray.length; i++) {
+				markerList.add((HashMap) markersArray[i]);
+			}
+		}
+
+
 		updateMarker();
 	}
 
@@ -215,8 +235,11 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 	public void updateMarker()
 	{
+		Activity activity = TiApplication.getAppCurrentActivity();
+		Resources res = TiApplication.getAppCurrentActivity().getResources();
+
 		for (int i = 0; i < markerList.size(); i++) {
-			HashMap<String, Object> dict = (HashMap<String, Object>) markerList.get(i);
+			HashMap dict = markerList.get(i);
 
 			GeoPoint markerPoint = new GeoPoint(TiConvert.toFloat(dict.get(TiC.PROPERTY_LATITUDE)),
 												TiConvert.toFloat(dict.get(TiC.PROPERTY_LONGITUDE)));
@@ -229,10 +252,8 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 				Object image = dict.get(TiC.PROPERTY_IMAGE);
 
 				if (image instanceof String) {
-					TiDrawableReference iconref =
-						TiDrawableReference.fromUrl(TiApplication.getAppCurrentActivity(), (String) image);
-					BitmapDrawable bitmapDrawable =
-						new BitmapDrawable(TiApplication.getAppCurrentActivity().getResources(), iconref.getBitmap());
+					TiDrawableReference iconref = TiDrawableReference.fromUrl(activity, (String) image);
+					BitmapDrawable bitmapDrawable = new BitmapDrawable(res, iconref.getBitmap());
 					try {
 						startMarker.setImage(bitmapDrawable);
 					} catch (Exception e) {
@@ -244,10 +265,8 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 				Object icon = dict.get(TiC.PROPERTY_ICON);
 
 				if (icon instanceof String) {
-					TiDrawableReference iconref =
-						TiDrawableReference.fromUrl(TiApplication.getAppCurrentActivity(), (String) icon);
-					BitmapDrawable bitmapDrawable = new BitmapDrawable(
-						TiApplication.getAppRootOrCurrentActivity().getResources(), iconref.getBitmap());
+					TiDrawableReference iconref = TiDrawableReference.fromUrl(activity, (String) icon);
+					BitmapDrawable bitmapDrawable = new BitmapDrawable(res, iconref.getBitmap());
 
 					startMarker.setAnchor(0.5f, 0.5f);
 					startMarker.setIcon(bitmapDrawable);
@@ -290,9 +309,9 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 			mapView.getOverlays().add(startMarker);
 
-			MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this);
-			mapView.getOverlays().add(0, mapEventsOverlay);
 		}
+		MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(this);
+		mapView.getOverlays().add(0, mapEventsOverlay);
 		mapView.invalidate();
 	}
 

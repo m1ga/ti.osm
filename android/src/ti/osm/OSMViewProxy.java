@@ -33,7 +33,7 @@ public class OSMViewProxy extends TiViewProxy
 	private static final boolean DBG = TiConfig.LOGD;
 	private boolean allowRotation = false;
 	private HashMap<String, Object> startLocation;
-	private ArrayList<Object> markerList = new ArrayList<Object>();
+	private ArrayList<HashMap> markerList = new ArrayList<HashMap>();
 	public int mapType = 0;
 	public boolean userLocation = false;
 	public boolean followLocation = false;
@@ -170,9 +170,16 @@ public class OSMViewProxy extends TiViewProxy
 
 	// Methods
 	@Kroll.method
-	public void addMarker(Object marker)
+	public void addMarker(HashMap marker)
 	{
 		getView().addMarker(marker);
+	}
+
+	// Methods
+	@Kroll.method
+	public void addMarkers(Object markers)
+	{
+		getView().addMarkers(markers);
 	}
 
 	// Methods
