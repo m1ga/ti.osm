@@ -55,7 +55,9 @@ public class OSMViewProxy extends TiViewProxy
 		view.getLayoutParams().autoFillsHeight = true;
 		view.getLayoutParams().autoFillsWidth = true;
 
-		if (startLocation != null && (!startLocation.containsKey(TiC.PROPERTY_LATITUDE) || !startLocation.containsKey(TiC.PROPERTY_LONGITUDE))) {
+		if (startLocation != null
+			&& (!startLocation.containsKey(TiC.PROPERTY_LATITUDE)
+				|| !startLocation.containsKey(TiC.PROPERTY_LONGITUDE))) {
 			Log.e(LCAT, "Unable to set location. Missing latitude or longitude.");
 		} else {
 			view.setLocation(startLocation);
@@ -71,7 +73,6 @@ public class OSMViewProxy extends TiViewProxy
 		try {
 			view.updateMarker();
 		} catch (Exception e) {
-
 		}
 		return view;
 	}
@@ -198,13 +199,15 @@ public class OSMViewProxy extends TiViewProxy
 	}
 
 	@Override
-	public void onPause(Activity activity) {
+	public void onPause(Activity activity)
+	{
 		super.onPause(activity);
 		getView().pause();
 	}
 
 	@Override
-	public void onResume(Activity activity) {
+	public void onResume(Activity activity)
+	{
 		super.onResume(activity);
 		getView().resume();
 	}

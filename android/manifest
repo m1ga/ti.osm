@@ -15,4 +15,4 @@ name: ti.osm
 moduleid: ti.osm
 guid: 2d5116e8-1aca-40b9-91f4-e844253c3477
 platform: android
-minsdk: 10.0.0.GA
+minsdk: 9.3.0.GA

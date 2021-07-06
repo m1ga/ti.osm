@@ -12,9 +12,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import androidx.annotation.NonNull;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +33,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
@@ -91,15 +90,20 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 			GpsMyLocationProvider provider = new GpsMyLocationProvider(proxy.getActivity());
 			provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
 			locationOverlay = new MyLocationNewOverlay(provider, mapView);
-			if (((OSMViewProxy) proxy).followLocation) locationOverlay.enableFollowLocation();
+			if (((OSMViewProxy) proxy).followLocation)
+				locationOverlay.enableFollowLocation();
 			locationOverlay.enableMyLocation();
 			locationOverlay.runOnFirstFix(new Runnable() {
-				public void run() {
+				public void run()
+				{
 					Log.i("MyTag", String.format("First location fix: %s", locationOverlay.getLastFix()));
 				}
 			});
 			mapView.getOverlays().add(locationOverlay);
 		}
+
+		CopyrightOverlay copyrightOverlay = new CopyrightOverlay(proxy.getActivity());
+		mapView.getOverlays().add(copyrightOverlay);
 	}
 
 	@Override
@@ -145,19 +149,45 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		OnlineTileSourceBase mapType = TileSourceFactory.MAPNIK;
 
 		switch (paramType) {
-			case 0: mapType = TileSourceFactory.MAPNIK; break;
-			case 1: mapType = TileSourceFactory.WIKIMEDIA;break;
-			case 2: mapType = TileSourceFactory.PUBLIC_TRANSPORT;break;
-			case 3: mapType = TileSourceFactory.CLOUDMADESTANDARDTILES;break;
-			case 4: mapType = TileSourceFactory.CLOUDMADESMALLTILES;break;
-			case 5: mapType = TileSourceFactory.FIETS_OVERLAY_NL;break;
-			case 6: mapType = TileSourceFactory.BASE_OVERLAY_NL;break;
-			case 7: mapType = TileSourceFactory.ROADS_OVERLAY_NL;break;
-			case 8: mapType = TileSourceFactory.HIKEBIKEMAP;break;
-			case 9: mapType = TileSourceFactory.OPEN_SEAMAP;break;
-			case 10: mapType = TileSourceFactory.USGS_TOPO;break;
-			case 11: mapType = TileSourceFactory.USGS_SAT;break;
-			default: mapType = TileSourceFactory.MAPNIK; break;
+			case 0:
+				mapType = TileSourceFactory.MAPNIK;
+				break;
+			case 1:
+				mapType = TileSourceFactory.WIKIMEDIA;
+				break;
+			case 2:
+				mapType = TileSourceFactory.PUBLIC_TRANSPORT;
+				break;
+			case 3:
+				mapType = TileSourceFactory.CLOUDMADESTANDARDTILES;
+				break;
+			case 4:
+				mapType = TileSourceFactory.CLOUDMADESMALLTILES;
+				break;
+			case 5:
+				mapType = TileSourceFactory.FIETS_OVERLAY_NL;
+				break;
+			case 6:
+				mapType = TileSourceFactory.BASE_OVERLAY_NL;
+				break;
+			case 7:
+				mapType = TileSourceFactory.ROADS_OVERLAY_NL;
+				break;
+			case 8:
+				mapType = TileSourceFactory.HIKEBIKEMAP;
+				break;
+			case 9:
+				mapType = TileSourceFactory.OPEN_SEAMAP;
+				break;
+			case 10:
+				mapType = TileSourceFactory.USGS_TOPO;
+				break;
+			case 11:
+				mapType = TileSourceFactory.USGS_SAT;
+				break;
+			default:
+				mapType = TileSourceFactory.MAPNIK;
+				break;
 		}
 		return mapType;
 	}
@@ -181,7 +211,8 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		mapView.setTileSource(getMapType(mapType));
 	}
 
-	public void updateMarker() {
+	public void updateMarker()
+	{
 		for (int i = 0; i < markerList.size(); i++) {
 			HashMap<String, Object> dict = (HashMap<String, Object>) markerList.get(i);
 
@@ -198,8 +229,8 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 				if (image instanceof String) {
 					TiDrawableReference iconref =
 						TiDrawableReference.fromUrl(TiApplication.getAppCurrentActivity(), (String) image);
-					BitmapDrawable bitmapDrawable = new BitmapDrawable(
-						TiApplication.getAppCurrentActivity().getResources(), iconref.getBitmap());
+					BitmapDrawable bitmapDrawable =
+						new BitmapDrawable(TiApplication.getAppCurrentActivity().getResources(), iconref.getBitmap());
 					try {
 						startMarker.setImage(bitmapDrawable);
 					} catch (Exception e) {
@@ -288,18 +319,20 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 	}
 
 	@Override
-	public void onLocationChanged(@NonNull Location location) {
-
+	public void onLocationChanged(@NonNull Location location)
+	{
 	}
 
-	public void pause(){
+	public void pause()
+	{
 		if (locationOverlay.isMyLocationEnabled()) {
 			locationOverlay.disableMyLocation();
 			locationOverlay.disableFollowLocation();
 		}
 	}
 
-	public void resume(){
+	public void resume()
+	{
 		if (((OSMViewProxy) proxy).userLocation) {
 			locationOverlay.enableMyLocation();
 		}
