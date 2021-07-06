@@ -10,23 +10,19 @@ package ti.osm;
 
 import android.app.Activity;
 import android.os.Message;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.AsyncResult;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
-import org.appcelerator.kroll.common.TiMessenger;
-import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
-import org.appcelerator.titanium.view.TiCompositeLayout;
-import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
 import org.appcelerator.titanium.view.TiUIView;
-import org.osmdroid.views.overlay.Marker;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 // This proxy can be created by calling TiOsm.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = TiOsmModule.class)

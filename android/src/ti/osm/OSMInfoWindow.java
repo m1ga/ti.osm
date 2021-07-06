@@ -2,12 +2,7 @@ package ti.osm;
 
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.util.TiEventHelper;
+
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;

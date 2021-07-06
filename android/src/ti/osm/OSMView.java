@@ -1,28 +1,23 @@
 package ti.osm;
 
-import static org.appcelerator.kroll.util.KrollAssetHelper.getPackageName;
-
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import androidx.annotation.NonNull;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
-import org.appcelerator.titanium.util.TiRHelper;
 import org.appcelerator.titanium.view.TiDrawableReference;
 import org.appcelerator.titanium.view.TiUIView;
 import org.osmdroid.api.IMapController;
@@ -41,6 +36,12 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static org.appcelerator.kroll.util.KrollAssetHelper.getPackageName;
 
 public class OSMView extends TiUIView implements MapEventsReceiver, LocationListener
 {
@@ -102,6 +103,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 			mapView.getOverlays().add(locationOverlay);
 		}
 
+		// copyright layer
 		CopyrightOverlay copyrightOverlay = new CopyrightOverlay(proxy.getActivity());
 		mapView.getOverlays().add(copyrightOverlay);
 	}

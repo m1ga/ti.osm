@@ -2,7 +2,7 @@ package ti.osm;
 
 import android.content.Context;
 import android.view.MotionEvent;
-import org.appcelerator.kroll.common.Log;
+
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 

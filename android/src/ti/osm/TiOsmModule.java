@@ -10,8 +10,6 @@ package ti.osm;
 
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
 import org.appcelerator.titanium.TiApplication;
 
 @Kroll.module(name = "TiOsm", id = "ti.osm")
