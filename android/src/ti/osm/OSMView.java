@@ -14,6 +14,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
@@ -147,6 +148,14 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 			startLocation = location;
 			updateLocation(location);
 		}
+	}
+
+	public KrollDict getLocation(){
+		KrollDict location = new KrollDict();
+		location.put("longitude", mapView.getMapCenter().getLongitude());
+		location.put("latitude", mapView.getMapCenter().getLatitude());
+		location.put("zoomLevel", mapView.getZoomLevelDouble());
+		return location;
 	}
 
 	private OnlineTileSourceBase getMapType(int paramType)

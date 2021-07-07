@@ -148,9 +148,9 @@ public class OSMViewProxy extends TiViewProxy
 
 	@Kroll.getProperty
 	@Kroll.method
-	public HashMap<String, Object> getLocation()
+	public KrollDict getLocation()
 	{
-		return startLocation;
+		return getView().getLocation();
 	}
 
 	@Override
