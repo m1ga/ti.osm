@@ -74,7 +74,11 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		LayoutInflater inflater = LayoutInflater.from(proxy.getActivity());
 		viewWrapper = inflater.inflate(resId_viewHolder, null);
 
-		Configuration.getInstance().setUserAgentValue(getPackageName());
+		if (((OSMViewProxy) proxy).userAgent != "") {
+			Configuration.getInstance().setUserAgentValue(((OSMViewProxy) proxy).userAgent);
+		} else {
+			Configuration.getInstance().setUserAgentValue(getPackageName());
+		}
 		mapView = viewWrapper.findViewById(resId_map);
 		setNativeView(viewWrapper);
 

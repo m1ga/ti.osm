@@ -70,6 +70,13 @@ OSM.createOSMView({
 mapView.mapType = OSM.PUBLIC_TRANSPORT;
 ```
 
+* userAgent: by default the bundleId will be used. If you want to change it you can use the creation-only `userAgent` property
+```javascript
+OSM.createOSMView({
+    userAgent: "customString"
+});
+```
+
 ## Methods
 
 * clear all markers:

@@ -37,6 +37,7 @@ public class OSMViewProxy extends TiViewProxy
 	public int mapType = 0;
 	public boolean userLocation = false;
 	public boolean followLocation = false;
+	public String userAgent;
 
 	// Constructor
 	public OSMViewProxy()
@@ -95,6 +96,9 @@ public class OSMViewProxy extends TiViewProxy
 		}
 		if (options.containsKey("followLocation")) {
 			followLocation = TiConvert.toBoolean(options.get("followLocation"));
+		}
+		if (options.containsKey(TiC.PROPERTY_USER_AGENT)) {
+			userAgent = TiConvert.toString(options.get(TiC.PROPERTY_USER_AGENT));
 		}
 	}
 
