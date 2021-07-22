@@ -74,7 +74,8 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		LayoutInflater inflater = LayoutInflater.from(proxy.getActivity());
 		viewWrapper = inflater.inflate(resId_viewHolder, null);
 
-		if (((OSMViewProxy) proxy).userAgent != "") {
+
+		if (((OSMViewProxy) proxy).userAgent != "" && ((OSMViewProxy) proxy).userAgent != null) {
 			Configuration.getInstance().setUserAgentValue(((OSMViewProxy) proxy).userAgent);
 		} else {
 			Configuration.getInstance().setUserAgentValue(getPackageName());
@@ -237,7 +238,6 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 			}
 		}
 
-
 		updateMarker();
 	}
 
@@ -363,6 +363,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 			locationOverlay.disableMyLocation();
 			locationOverlay.disableFollowLocation();
 		}
+		mapView.onPause();
 	}
 
 	public void resume()
@@ -373,5 +374,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		if (((OSMViewProxy) proxy).followLocation) {
 			locationOverlay.enableFollowLocation();
 		}
+
+		mapView.onResume();
 	}
 }
