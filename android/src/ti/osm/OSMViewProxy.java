@@ -24,7 +24,6 @@ import org.appcelerator.titanium.view.TiUIView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// This proxy can be created by calling TiOsm.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = TiOsmModule.class)
 public class OSMViewProxy extends TiViewProxy
 {
@@ -179,18 +178,28 @@ public class OSMViewProxy extends TiViewProxy
 		getView().addMarker(marker);
 	}
 
-	// Methods
 	@Kroll.method
 	public void addMarkers(Object markers)
 	{
 		getView().addMarkers(markers);
 	}
 
-	// Methods
 	@Kroll.method
 	public void clearMarker()
 	{
 		doClearMarker();
+	}
+
+	@Kroll.method
+	public void pause()
+	{
+		getView().pause();
+	}
+
+	@Kroll.method
+	public void resume()
+	{
+		getView().resume();
 	}
 
 	private void doClearMarker()

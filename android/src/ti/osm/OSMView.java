@@ -14,7 +14,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
