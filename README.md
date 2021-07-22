@@ -14,7 +14,9 @@ Add module to `tiapp.xml`:
 #### Classic version:
 ```javascript
 var OSM = require('ti.osm');
-var osmView = OSM.createOSMView({});
+var osmView = OSM.createOSMView({
+	lifecycleContainer: $.index // your window
+});
 ```
 
 #### Alloy version:
@@ -106,6 +108,8 @@ for (var i = 0; i < 100; ++i) {
 }
 osmView.addMarkers(markerList);
 ```
+
+* pause/resume: if you manually need to call the pause/resume event (will be called automatically if you assign the livecycleContainer). Will pause the userlocation calls
 
 ## Events
 
