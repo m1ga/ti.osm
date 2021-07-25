@@ -358,7 +358,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 	public void pause()
 	{
-		if (locationOverlay.isMyLocationEnabled()) {
+		if (locationOverlay != null && locationOverlay.isMyLocationEnabled()) {
 			locationOverlay.disableMyLocation();
 			locationOverlay.disableFollowLocation();
 		}
@@ -368,10 +368,10 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 	public void resume()
 	{
 		if (((OSMViewProxy) proxy).userLocation) {
-			locationOverlay.enableMyLocation();
+			if (locationOverlay != null) locationOverlay.enableMyLocation();
 		}
 		if (((OSMViewProxy) proxy).followLocation) {
-			locationOverlay.enableFollowLocation();
+			if (locationOverlay != null) locationOverlay.enableFollowLocation();
 		}
 
 		mapView.onResume();
