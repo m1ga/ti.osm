@@ -1,7 +1,7 @@
-# Ti.OSM - OpenstreetMap module for Appcelerato Titanium (Android)
+# Ti.OSM - OpenstreetMap module for Titanium (Android)
 
 <img src="screenshot.jpg"/><br/>
-Use OpenstreetMap as a map in Titanium.
+Use OpenstreetMap as a map in Titanium. Library: <a href="https://github.com/osmdroid/osmdroid">osmdroid</a>
 
 ## Setup
 
@@ -13,10 +13,21 @@ Add module to `tiapp.xml`:
 
 #### Classic version:
 ```javascript
-var OSM = require('ti.osm');
-var osmView = OSM.createOSMView({
-	lifecycleContainer: $.index // your window
+const win = Titanium.UI.createWindow({});
+const OSM = require('ti.osm');
+
+const osmView = OSM.createOSMView({
+	lifecycleContainer: win
 });
+osmView.addEventListener("regionchanged", function(e) {
+	console.log(e.longitude, e.latitude);
+})
+osmView.addEventListener("zoom", function(e) {
+	console.log(e.zoomLevel);
+})
+
+win.add(osmView);
+win.open();
 ```
 
 #### Alloy version:
@@ -113,8 +124,10 @@ osmView.addMarkers(markerList);
 
 ## Events
 
-* `infoboxClick`
-* `markerClick`
+* **infoboxClick** return `marker`, `type`
+* **markerClick** return `marker`, `type`
+* **regionchanged** returns `longitude`, `latitude`
+* **zoom** returns `zoomLevel`
 
 ## Example
 ```javascript

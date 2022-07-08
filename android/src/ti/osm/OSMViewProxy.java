@@ -4,7 +4,6 @@
  * Copyright (c) 2009-2017 by Appcelerator, Inc. All Rights Reserved.
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
- *
  */
 package ti.osm;
 
@@ -25,206 +24,185 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Kroll.proxy(creatableInModule = TiOsmModule.class)
-public class OSMViewProxy extends TiViewProxy
-{
-	// Standard Debugging variables
-	private static final String LCAT = "ExampleProxy";
-	private static final boolean DBG = TiConfig.LOGD;
-	private boolean allowRotation = false;
-	private HashMap<String, Object> startLocation;
-	private ArrayList<HashMap> markerList = new ArrayList<HashMap>();
-	public int mapType = 0;
-	public boolean userLocation = false;
-	public boolean followLocation = false;
-	public String userAgent;
+public class OSMViewProxy extends TiViewProxy {
+    // Standard Debugging variables
+    private static final String LCAT = "ExampleProxy";
+    private static final boolean DBG = TiConfig.LOGD;
+    public int mapType = 0;
+    public boolean userLocation = false;
+    public boolean followLocation = false;
+    public String userAgent;
+    private boolean allowRotation = false;
+    private HashMap<String, Object> startLocation;
+    private final ArrayList<HashMap> markerList = new ArrayList<HashMap>();
 
-	// Constructor
-	public OSMViewProxy()
-	{
-		super();
-	}
+    // Constructor
+    public OSMViewProxy() {
+        super();
+    }
 
-	@Override
-	public TiUIView createView(Activity activity)
-	{
-		OSMView view = new OSMView(this);
-		view.getLayoutParams().autoFillsHeight = true;
-		view.getLayoutParams().autoFillsWidth = true;
+    @Override
+    public TiUIView createView(Activity activity) {
+        OSMView view = new OSMView(this);
+        view.getLayoutParams().autoFillsHeight = true;
+        view.getLayoutParams().autoFillsWidth = true;
 
-		if (startLocation != null
-			&& (!startLocation.containsKey(TiC.PROPERTY_LATITUDE)
-				|| !startLocation.containsKey(TiC.PROPERTY_LONGITUDE))) {
-			Log.e(LCAT, "Unable to set location. Missing latitude or longitude.");
-		} else {
-			view.setLocation(startLocation);
-		}
+        if (startLocation != null
+                && (!startLocation.containsKey(TiC.PROPERTY_LATITUDE)
+                || !startLocation.containsKey(TiC.PROPERTY_LONGITUDE))) {
+            Log.e(LCAT, "Unable to set location. Missing latitude or longitude.");
+        } else {
+            view.setLocation(startLocation);
+        }
 
-		if (allowRotation) {
-			view.allowRotation(true);
-		}
+        if (allowRotation) {
+            view.allowRotation(true);
+        }
 
-		for (int i = 0; i < markerList.size(); i++) {
-			view.addMarker(markerList.get(i));
-		}
-		try {
-			view.updateMarker();
-		} catch (Exception e) {
-		}
-		return view;
-	}
+        for (int i = 0; i < markerList.size(); i++) {
+            view.addMarker(markerList.get(i));
+        }
+        try {
+            view.updateMarker();
+        } catch (Exception e) {
+        }
+        return view;
+    }
 
-	protected OSMView getView()
-	{
-		return (OSMView) getOrCreateView();
-	}
+    protected OSMView getView() {
+        return (OSMView) getOrCreateView();
+    }
 
-	// Handle creation options
-	@Override
-	public void handleCreationDict(KrollDict options)
-	{
-		super.handleCreationDict(options);
+    // Handle creation options
+    @Override
+    public void handleCreationDict(KrollDict options) {
+        super.handleCreationDict(options);
 
-		if (options.containsKey(TiC.PROPERTY_LOCATION)) {
-			setLocation(options.get(TiC.PROPERTY_LOCATION));
-		}
-		if (options.containsKey(TiC.PROPERTY_MAP_TYPE)) {
-			mapType = TiConvert.toInt(options.get(TiC.PROPERTY_MAP_TYPE), 0);
-		}
-		if (options.containsKey(TiC.PROPERTY_USER_LOCATION)) {
-			userLocation = TiConvert.toBoolean(options.get(TiC.PROPERTY_USER_LOCATION));
-		}
-		if (options.containsKey("followLocation")) {
-			followLocation = TiConvert.toBoolean(options.get("followLocation"));
-		}
-		if (options.containsKey(TiC.PROPERTY_USER_AGENT)) {
-			userAgent = TiConvert.toString(options.get(TiC.PROPERTY_USER_AGENT));
-		}
-	}
+        if (options.containsKey(TiC.PROPERTY_LOCATION)) {
+            setLocation(options.get(TiC.PROPERTY_LOCATION));
+        }
+        if (options.containsKey(TiC.PROPERTY_MAP_TYPE)) {
+            mapType = TiConvert.toInt(options.get(TiC.PROPERTY_MAP_TYPE), 0);
+        }
+        if (options.containsKey(TiC.PROPERTY_USER_LOCATION)) {
+            userLocation = TiConvert.toBoolean(options.get(TiC.PROPERTY_USER_LOCATION));
+        }
+        if (options.containsKey("followLocation")) {
+            followLocation = TiConvert.toBoolean(options.get("followLocation"));
+        }
+        if (options.containsKey(TiC.PROPERTY_USER_AGENT)) {
+            userAgent = TiConvert.toString(options.get(TiC.PROPERTY_USER_AGENT));
+        }
+    }
 
-	@Kroll.getProperty
-	@Kroll.method
-	public boolean getAllowRotation()
-	{
-		return allowRotation;
-	}
+    @Kroll.getProperty
+    @Kroll.method
+    public boolean getAllowRotation() {
+        return allowRotation;
+    }
 
-	@Kroll.setProperty
-	@Kroll.method
-	public void setAllowRotation(boolean value)
-	{
-		allowRotation = value;
-		getView().allowRotation(value);
-	}
+    @Kroll.setProperty
+    @Kroll.method
+    public void setAllowRotation(boolean value) {
+        allowRotation = value;
+        getView().allowRotation(value);
+    }
 
-	@Kroll.setProperty
-	@Kroll.method
-	public void setLocation(Object location)
-	{
-		if (location instanceof HashMap) {
-			startLocation = (HashMap<String, Object>) location;
-		}
+    @Kroll.getProperty
+    @Kroll.method
+    public int getMapType() {
+        return mapType;
+    }
 
-		if (location instanceof HashMap) {
-			if (!startLocation.containsKey(TiC.PROPERTY_LATITUDE)
-				|| !startLocation.containsKey(TiC.PROPERTY_LONGITUDE)) {
-				Log.e(LCAT, "Unable to set location. Missing latitude or longitude.");
-				return;
-			}
-			getView().setLocation(startLocation);
-		}
-	}
+    @Kroll.setProperty
+    @Kroll.method
+    public void setMapType(int type) {
+        mapType = type;
+        getView().setMapType(type);
+    }
 
-	@Kroll.setProperty
-	@Kroll.method
-	public void setMapType(int type)
-	{
-		mapType = type;
-		getView().setMapType(type);
-	}
+    @Kroll.getProperty
+    @Kroll.method
+    public KrollDict getLocation() {
+        return getView().getLocation();
+    }
 
-	@Kroll.getProperty
-	@Kroll.method
-	public int getMapType()
-	{
-		return mapType;
-	}
+    @Kroll.setProperty
+    @Kroll.method
+    public void setLocation(Object location) {
+        if (location instanceof HashMap) {
+            startLocation = (HashMap<String, Object>) location;
+        }
 
-	@Kroll.getProperty
-	@Kroll.method
-	public KrollDict getLocation()
-	{
-		return getView().getLocation();
-	}
+        if (location instanceof HashMap) {
+            if (!startLocation.containsKey(TiC.PROPERTY_LATITUDE)
+                    || !startLocation.containsKey(TiC.PROPERTY_LONGITUDE)) {
+                Log.e(LCAT, "Unable to set location. Missing latitude or longitude.");
+                return;
+            }
+            getView().setLocation(startLocation);
+        }
+    }
 
-	@Override
-	public boolean handleMessage(Message msg)
-	{
-		AsyncResult result = null;
-		switch (msg.what) {
-			case 1: {
-				result = (AsyncResult) msg.obj;
-				doClearMarker();
-				result.setResult(null);
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean handleMessage(Message msg) {
+        AsyncResult result = null;
+        switch (msg.what) {
+            case 1: {
+                result = (AsyncResult) msg.obj;
+                doClearMarker();
+                result.setResult(null);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	// Methods
-	@Kroll.method
-	public void addMarker(HashMap marker)
-	{
-		getView().addMarker(marker);
-	}
+    // Methods
+    @Kroll.method
+    public void addMarker(HashMap marker) {
+        getView().addMarker(marker);
+    }
 
-	@Kroll.method
-	public void addMarkers(Object markers)
-	{
-		getView().addMarkers(markers);
-	}
+    @Kroll.method
+    public void addMarkers(Object markers) {
+        getView().addMarkers(markers);
+    }
 
-	@Kroll.method
-	public void clearMarker()
-	{
-		doClearMarker();
-	}
+    @Kroll.method
+    public void clearMarker() {
+        doClearMarker();
+    }
 
-	@Kroll.method
-	public void pause()
-	{
-		getView().pause();
-	}
+    @Kroll.method
+    public void pause() {
+        getView().pause();
+    }
 
-	@Kroll.method
-	public void resume()
-	{
-		getView().resume();
-	}
+    @Kroll.method
+    public void resume() {
+        getView().resume();
+    }
 
-	private void doClearMarker()
-	{
-		getView().clearMarker();
-	}
+    private void doClearMarker() {
+        getView().clearMarker();
+    }
 
-	void updateEvent(String event, KrollDict data)
-	{
-		if (hasListeners(event)) {
-			fireSyncEvent(event, data);
-		}
-	}
+    void updateEvent(String event, KrollDict data) {
+        if (hasListeners(event)) {
+            fireSyncEvent(event, data);
+        }
+    }
 
-	@Override
-	public void onPause(Activity activity)
-	{
-		super.onPause(activity);
-		getView().pause();
-	}
+    @Override
+    public void onPause(Activity activity) {
+        super.onPause(activity);
+        getView().pause();
+    }
 
-	@Override
-	public void onResume(Activity activity)
-	{
-		super.onResume(activity);
-		getView().resume();
-	}
+    @Override
+    public void onResume(Activity activity) {
+        super.onResume(activity);
+        getView().resume();
+    }
 }

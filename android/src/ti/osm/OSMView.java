@@ -1,5 +1,7 @@
 package ti.osm;
 
+import static org.appcelerator.kroll.util.KrollAssetHelper.getPackageName;
+
 import android.app.Activity;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
@@ -9,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -21,9 +24,13 @@ import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
 import org.appcelerator.titanium.view.TiDrawableReference;
 import org.appcelerator.titanium.view.TiUIView;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -41,8 +48,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static org.appcelerator.kroll.util.KrollAssetHelper.getPackageName;
 
 public class OSMView extends TiUIView implements MapEventsReceiver, LocationListener
 {
@@ -112,6 +117,27 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 		// copyright layer
 		CopyrightOverlay copyrightOverlay = new CopyrightOverlay(proxy.getActivity());
 		mapView.getOverlays().add(copyrightOverlay);
+
+		// event listeners
+		mapView.addMapListener(new MapListener() {
+			@Override
+			public boolean onScroll(ScrollEvent event) {
+				IGeoPoint mapCenter = mapView.getMapCenter();
+				KrollDict kd = new KrollDict();
+				kd.put("longitude", mapCenter.getLongitude());
+				kd.put("latitude", mapCenter.getLatitude());
+				proxy.fireSyncEvent("regionchanged", kd);
+				return true;
+			}
+
+			@Override
+			public boolean onZoom(ZoomEvent event) {
+				KrollDict kd = new KrollDict();
+				kd.put("zoomLevel", event.getZoomLevel());
+				proxy.fireSyncEvent("zoom", kd);
+				return true;
+			}
+		});
 	}
 
 	@Override
