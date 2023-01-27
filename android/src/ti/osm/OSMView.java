@@ -49,10 +49,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.tileprovider.cachemanager.CacheManager;
+
 public class OSMView extends TiUIView implements MapEventsReceiver, LocationListener
 {
 
 	private MapView mapView;
+	private CacheManager cacheManager;
 	private RotationGestureOverlay mRotationGestureOverlay = null;
 	private TiViewProxy proxy;
 	private IMapController mapController;
@@ -402,4 +406,63 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
 		mapView.onResume();
 	}
+	
+	private CacheManager getCacheManager() {
+		if (cacheManager == null) {
+			cacheManager = new CacheManager(mapView);
+		}
+		return cacheManager;
+	}
+
+	public int possibleTilesInArea(int zoommin, int zoommax) {
+        return getCacheManager().possibleTilesInArea(mapView.getBoundingBox(), zoommin, zoommax);
+    }
+
+	public long cacheCapacity() {
+        return getCacheManager().cacheCapacity();
+    }
+
+	public long currentCacheUsage() {
+        return getCacheManager().currentCacheUsage();
+    }
+
+	public void downloadAreaAsync(int zoommin, int zoommax) {
+		Activity activity = TiApplication.getAppCurrentActivity();
+		getCacheManager().downloadAreaAsync(activity, mapView.getBoundingBox(), zoommin, zoommax, new CacheManager.CacheManagerCallback() {
+			@Override
+			public void onTaskComplete() {
+				KrollDict kd = new KrollDict();
+				((OSMViewProxy) proxy).updateEvent("downloadcomplete", kd);
+			}
+
+			@Override
+			public void onTaskFailed(int errors) {
+				KrollDict kd = new KrollDict();
+				kd.put("code", errors);
+				((OSMViewProxy) proxy).updateEvent("downloadfailed", kd);
+			}
+
+			@Override
+			public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
+				KrollDict kd = new KrollDict();
+				kd.put("progress", progress);
+				kd.put("currentZoomLevel", currentZoomLevel);
+				kd.put("zoomMin", zoomMin);
+				kd.put("zoomMax", zoomMax);
+				((OSMViewProxy) proxy).updateEvent("downloadprogress", kd);
+			}
+
+			@Override
+			public void downloadStarted() {
+				KrollDict kd = new KrollDict();
+				((OSMViewProxy) proxy).updateEvent("downloadstarted", kd);
+			}
+
+			@Override
+			public void setPossibleTilesInArea(int total) {
+				//NOOP since we are using the build in UI
+			}
+		});
+    }
+
 }

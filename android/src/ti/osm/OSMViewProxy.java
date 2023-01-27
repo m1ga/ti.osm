@@ -183,6 +183,26 @@ public class OSMViewProxy extends TiViewProxy {
     public void resume() {
         getView().resume();
     }
+ 
+    @Kroll.method
+    public long cacheCapacity() {
+        return getView().cacheCapacity();
+    }
+    
+    @Kroll.method
+    public long currentCacheUsage() {
+        return getView().currentCacheUsage();
+    }
+
+    @Kroll.method
+    public int possibleTilesInArea(int zoommin, int zoommax) {
+        return getView().possibleTilesInArea(zoommin, zoommax);
+    }
+
+    @Kroll.method
+    public void downloadAreaAsync(int zoommin, int zoommax) {
+        getView().downloadAreaAsync(zoommin, zoommax);
+    }
 
     private void doClearMarker() {
         getView().clearMarker();
