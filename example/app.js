@@ -3,7 +3,7 @@ const OSM = require('ti.osm');
 
 const osmView = OSM.createOSMView({
 	lifecycleContainer: win,
-	mapType: OSM.MAPNIK
+	mapType: OSM.USGS_SAT
 });
 osmView.addEventListener("regionchanged", function(e) {
 	console.log(e.longitude, e.latitude);
