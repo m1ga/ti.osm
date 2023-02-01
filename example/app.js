@@ -1,39 +1,33 @@
-// This is a test harness for your module
-// You should do something interesting in this harness
-// to test out the module and to provide instructions
-// to users on how to use it by example.
+const win = Titanium.UI.createWindow({});
+const OSM = require('ti.osm');
 
-
-// open a single window
-var win = Ti.UI.createWindow({
-	backgroundColor:'white'
+const osmView = OSM.createOSMView({
+	lifecycleContainer: win,
+	mapType: OSM.MAPNIK
 });
-var label = Ti.UI.createLabel();
-win.add(label);
+osmView.addEventListener("regionchanged", function(e) {
+	console.log(e.longitude, e.latitude);
+})
+osmView.addEventListener("zoom", function(e) {
+	console.log(e.zoomLevel);
+});
+
+osmView.addEventListener("downloadprogress", function(e) {
+	console.log("downloadprogress", e.progress);
+});
+
+const btn = Ti.UI.createButton({
+	title: "Download cache",
+	bottom: 11
+});
+
+btn.addEventListener("click", (e) => {
+	console.log("possibleTilesInArea:", osmView.possibleTilesInArea(10,12));
+	console.log("currentCacheUsage:", osmView.currentCacheUsage());
+	console.log("cacheCapacity:", osmView.cacheCapacity());
+	osmView.downloadAreaAsync(10,12);
+}, 1000);
+
+win.add(osmView);
+win.add(btn);
 win.open();
-
-// TODO: write your module tests here
-var ti_osm = require('ti.osm');
-Ti.API.info("module is => " + ti_osm);
-
-label.text = ti_osm.example();
-
-Ti.API.info("module exampleProp is => " + ti_osm.exampleProp);
-ti_osm.exampleProp = "This is a test value";
-
-if (Ti.Platform.name == "android") {
-	var proxy = ti_osm.createExample({
-		message: "Creating an example Proxy",
-		backgroundColor: "red",
-		width: 100,
-		height: 100,
-		top: 100,
-		left: 150
-	});
-
-	proxy.printMessage("Hello world!");
-	proxy.message = "Hi world!.  It's me again.";
-	proxy.printMessage("Hello world!");
-	win.add(proxy);
-}
-
