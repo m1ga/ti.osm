@@ -3,7 +3,7 @@ const OSM = require('ti.osm');
 
 const osmView = OSM.createOSMView({
 	lifecycleContainer: win,
-	mapType: OSM.USGS_SAT
+	mapType: OSM.MAPNIK
 });
 osmView.addEventListener("regionchanged", function(e) {
 	console.log(e.longitude, e.latitude);
@@ -18,16 +18,30 @@ osmView.addEventListener("downloadprogress", function(e) {
 
 const btn = Ti.UI.createButton({
 	title: "Download cache",
-	bottom: 11
+	bottom: 40,
+	right: 10
+});
+const btn_type = Ti.UI.createButton({
+	title: "Switch map type",
+	bottom: 40,
+	left: 10
+});
+
+btn_type.addEventListener("click", (e) => {
+	btn.show();
+	osmView.mapType = OSM.USGS_SAT
 });
 
 btn.addEventListener("click", (e) => {
-	console.log("possibleTilesInArea:", osmView.possibleTilesInArea(10,12));
+	console.log("possibleTilesInArea:", osmView.possibleTilesInArea(10, 12));
 	console.log("currentCacheUsage:", osmView.currentCacheUsage());
 	console.log("cacheCapacity:", osmView.cacheCapacity());
-	osmView.downloadAreaAsync(10,12);
-}, 1000);
+	if (osmView.downloadAllowed) {
+		osmView.downloadAreaAsync(10, 12);
+	} else {
+		alert("Map doesn't allow download. Switch type first");
+	}
+});
 
-win.add(osmView);
-win.add(btn);
+win.add([osmView, btn, btn_type]);
 win.open();

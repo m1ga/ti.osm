@@ -204,6 +204,11 @@ public class OSMViewProxy extends TiViewProxy {
         getView().downloadAreaAsync(zoommin, zoommax);
     }
 
+    @Kroll.getProperty
+    public boolean downloadAllowed() {
+        return getView().downloadAllowed();
+    }
+
     private void doClearMarker() {
         getView().clearMarker();
     }

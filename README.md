@@ -90,6 +90,8 @@ OSM.createOSMView({
 });
 ```
 
+* downloadAllowed: returns true/false if caching is allowed
+
 ## Methods
 
 * clear all markers:

@@ -33,6 +33,7 @@ import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.TileSourcePolicyException;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -109,7 +110,7 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
             locationOverlay.enableMyLocation();
             locationOverlay.runOnFirstFix(new Runnable() {
                 public void run() {
-                    Log.i("MyTag", String.format("First location fix: %s", locationOverlay.getLastFix()));
+                    Log.i("OSM", String.format("First location fix: %s", locationOverlay.getLastFix()));
                 }
             });
             mapView.getOverlays().add(locationOverlay);
@@ -388,7 +389,11 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
 
     private CacheManager getCacheManager() {
         if (cacheManager == null) {
-            cacheManager = new CacheManager(mapView);
+            try {
+                cacheManager = new CacheManager(mapView);
+            } catch (TileSourcePolicyException e) {
+                Log.e("OSM", e.getMessage());
+            }
         }
         return cacheManager;
     }
@@ -405,43 +410,62 @@ public class OSMView extends TiUIView implements MapEventsReceiver, LocationList
         return getCacheManager().currentCacheUsage();
     }
 
+    public boolean downloadAllowed() {
+        boolean isAllowed = ((OnlineTileSourceBase) mapView.getTileProvider().getTileSource()).getTileSourcePolicy().acceptsBulkDownload();
+        if (!isAllowed){
+            cacheManager = null;
+        }
+        return isAllowed;
+    }
+
     public void downloadAreaAsync(int zoommin, int zoommax) {
         Activity activity = TiApplication.getAppCurrentActivity();
-        getCacheManager().downloadAreaAsync(activity, mapView.getBoundingBox(), zoommin, zoommax, new CacheManager.CacheManagerCallback() {
-            @Override
-            public void onTaskComplete() {
-                KrollDict kd = new KrollDict();
-                ((OSMViewProxy) proxy).updateEvent("downloadcomplete", kd);
-            }
 
-            @Override
-            public void onTaskFailed(int errors) {
-                KrollDict kd = new KrollDict();
-                kd.put("code", errors);
-                ((OSMViewProxy) proxy).updateEvent("downloadfailed", kd);
-            }
+        if (!downloadAllowed()) {
+            return;
+        }
 
-            @Override
-            public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-                KrollDict kd = new KrollDict();
-                kd.put("progress", progress);
-                kd.put("currentZoomLevel", currentZoomLevel);
-                kd.put("zoomMin", zoomMin);
-                kd.put("zoomMax", zoomMax);
-                ((OSMViewProxy) proxy).updateEvent("downloadprogress", kd);
-            }
+        try {
+            getCacheManager().downloadAreaAsync(activity, mapView.getBoundingBox(), zoommin, zoommax, new CacheManager.CacheManagerCallback() {
+                @Override
+                public void onTaskComplete() {
+                    KrollDict kd = new KrollDict();
+                    ((OSMViewProxy) proxy).updateEvent("downloadcomplete", kd);
+                }
 
-            @Override
-            public void downloadStarted() {
-                KrollDict kd = new KrollDict();
-                ((OSMViewProxy) proxy).updateEvent("downloadstarted", kd);
-            }
+                @Override
+                public void onTaskFailed(int errors) {
+                    KrollDict kd = new KrollDict();
+                    kd.put("code", errors);
+                    ((OSMViewProxy) proxy).updateEvent("downloadfailed", kd);
+                }
 
-            @Override
-            public void setPossibleTilesInArea(int total) {
-                //NOOP since we are using the build in UI
-            }
-        });
+                @Override
+                public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
+                    KrollDict kd = new KrollDict();
+                    kd.put("progress", progress);
+                    kd.put("currentZoomLevel", currentZoomLevel);
+                    kd.put("zoomMin", zoomMin);
+                    kd.put("zoomMax", zoomMax);
+                    ((OSMViewProxy) proxy).updateEvent("downloadprogress", kd);
+                }
+
+                @Override
+                public void downloadStarted() {
+                    KrollDict kd = new KrollDict();
+                    ((OSMViewProxy) proxy).updateEvent("downloadstarted", kd);
+                }
+
+                @Override
+                public void setPossibleTilesInArea(int total) {
+                    //NOOP since we are using the build in UI
+                }
+            });
+        } catch (TileSourcePolicyException e){
+            KrollDict kd = new KrollDict();
+            kd.put("error", e.getMessage());
+            ((OSMViewProxy) proxy).updateEvent("downloadfailed", kd);
+        }
     }
 
 }
