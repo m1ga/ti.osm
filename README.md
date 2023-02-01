@@ -124,12 +124,25 @@ osmView.addMarkers(markerList);
 
 * pause/resume: if you manually need to call the pause/resume event (will be called automatically if you assign the livecycleContainer). Will pause the userlocation calls
 
+* downloadAreaAsync(zoommin, zoommax)
+
+* possibleTilesInArea(zoommin, zoommax)
+
+* currentCacheUsage()
+
+* cacheCapacity()
+
+
 ## Events
 
 * **infoboxClick** return `marker`, `type`
 * **markerClick** return `marker`, `type`
 * **regionchanged** returns `longitude`, `latitude`
 * **zoom** returns `zoomLevel`
+* **downloadprogress**
+* **downloadcomplete**
+* **downloadfailed**
+* **downloadstarted**
 
 ## Example
 ```javascript
